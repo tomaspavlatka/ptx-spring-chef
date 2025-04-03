@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "lead-engine.base-url",
+      "type": "java.lang.String",
+      "description": "Base URL for the Lead Engine"
+    }
+  ]
+}
