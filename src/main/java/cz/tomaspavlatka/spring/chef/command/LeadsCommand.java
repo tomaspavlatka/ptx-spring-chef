@@ -10,6 +10,7 @@ import org.springframework.shell.command.annotation.Option;
 
 import cz.tomaspavlatka.spring.chef.lead.LeadEngineFacade;
 import cz.tomaspavlatka.spring.chef.lead.model.PeriodReport;
+import cz.tomaspavlatka.spring.chef.lead.usecase.query.CompaniesListQuery;
 
 @Command(group = "Leads", command = "leads")
 public class LeadsCommand {
@@ -17,9 +18,27 @@ public class LeadsCommand {
   private Terminal terminal;
 
   private final LeadEngineFacade leadEngineFacade;
+  private final CompaniesListQuery companiesListQuery;
 
-  public LeadsCommand(LeadEngineFacade leadEngineFacade) {
+  public LeadsCommand(
+      LeadEngineFacade leadEngineFacade,
+      CompaniesListQuery companiesListQuery) {
     this.leadEngineFacade = leadEngineFacade;
+    this.companiesListQuery = companiesListQuery;
+  }
+
+  @Command(command = "companies", description = "Shows list of companies with billing info for specific month")
+  void companies(@Option(required = true) Integer year, @Option(required = true) Integer month) {
+    var companies = companiesListQuery.getCompanies(year, month);
+
+    terminal.writer().println("Companies, Y:" + year + ", M:" + month);
+    terminal.writer().println("===========================");
+
+    companies.stream().forEach(comp -> {
+      terminal.writer().println("- " + comp.auth0Id());
+    });
+
+    terminal.flush();
   }
 
   @Command(command = "summary", description = "Shows summary for specific month")
