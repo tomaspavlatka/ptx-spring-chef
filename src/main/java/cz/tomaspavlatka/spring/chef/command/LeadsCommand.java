@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 
+import cz.tomaspavlatka.spring.chef.lead.usecase.query.BillingsCompaniesQuery;
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.BillingsSummaryQuery;
 
 @Command(group = "Leads", command = "leads")
@@ -13,13 +14,39 @@ public class LeadsCommand {
   private Terminal terminal;
 
   private final BillingsSummaryQuery billingsSummaryQuery;
+  private final BillingsCompaniesQuery billingsCompaniesQuery;
 
-  public LeadsCommand(BillingsSummaryQuery billingsSummaryQuery) {
+  public LeadsCommand(
+      BillingsSummaryQuery billingsSummaryQuery,
+      BillingsCompaniesQuery billingsCompaniesQuery) {
     this.billingsSummaryQuery = billingsSummaryQuery;
+    this.billingsCompaniesQuery = billingsCompaniesQuery;
+  }
+
+  @Command(command = "companies", description = "Lists companies with at least 1 billings item for specific month")
+  void companies(@Option(required = true) Integer year, @Option(required = true) Integer month) {
+    var companies = billingsCompaniesQuery.getCompanies(year, month);
+
+    terminal.writer().println("Leads Companies, Y:" + year + ", M:" + month);
+    terminal.writer().println("===========================");
+
+    companies.forEach(comp -> {
+      var companyName = comp.company().displayName().or(() -> comp.company().name()).orElse("n/a");
+      terminal.writer().println("Company : " + companyName);
+      terminal.writer().println("ID      : " + comp.company().id());
+      terminal.writer().println("Auth0ID : " + comp.company().auth0Id());
+
+      comp.summary().forEach((k, v) -> {
+        terminal.writer().println("- " + v + " x " + k);
+      });
+
+      terminal.writer().println("-------- ");
+    });
+
+    terminal.flush();
   }
 
   @Command(command = "summary", description = "Shows summary for specific month")
-
   void report(@Option(required = true) Integer year, @Option(required = true) Integer month) {
     var summary = billingsSummaryQuery.getSummary(year, month);
 
