@@ -28,7 +28,7 @@ public class LeadsCommand {
     var companies = billingsCompaniesQuery.getCompanies(year, month);
 
     terminal.writer().println("Leads Companies, Y:" + year + ", M:" + month);
-    terminal.writer().println("===========================");
+    terminal.writer().println("=============================");
 
     companies.forEach(comp -> {
       var companyName = comp.company().displayName().or(() -> comp.company().name()).orElse("n/a");

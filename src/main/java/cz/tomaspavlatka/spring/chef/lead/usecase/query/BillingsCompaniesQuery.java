@@ -20,12 +20,18 @@ public class BillingsCompaniesQuery {
   }
 
   public List<CompanyBillingsSummary> getCompanies(Integer year, Integer month) {
+    var companies = leadEngineFacade.getCompanies();
+
     return leadEngineFacade.forPeriod(year, month)
         .orgs()
         .stream()
         .map(org -> {
-          var profile = new CompanyProfile(org.id(), org.auth0Id(), Optional.empty(), Optional.empty());
-
+          var company = companies.stream().filter(comp -> comp.id().equals(org.id())).findFirst();
+          var profile = new CompanyProfile(
+              org.id(),
+              org.auth0Id(),
+              company.isPresent() ? company.get().name() : Optional.empty(),
+              company.isPresent() ? company.get().displayName() : Optional.empty());
           var summary = new HashMap<String, Integer>();
           org.items().forEach(itm -> {
             var status = itm.status().toLowerCase();
