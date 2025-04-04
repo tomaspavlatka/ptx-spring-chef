@@ -13,4 +13,5 @@ public class LeadEngineProperties {
   private String baseUrl;
   private String partnerId;
   private String authToken;
+  private String jwtToken;
 }

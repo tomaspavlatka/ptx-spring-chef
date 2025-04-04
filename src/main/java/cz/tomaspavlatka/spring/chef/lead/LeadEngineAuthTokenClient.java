@@ -5,7 +5,7 @@ import org.springframework.web.service.annotation.GetExchange;
 
 import cz.tomaspavlatka.spring.chef.lead.model.BillingsReport;
 
-public interface LeadEngineClient {
+public interface LeadEngineAuthTokenClient {
   @GetExchange("/billings/{partnerId}/leads?year={year}&month={month}")
   BillingsReport getBillingsReport(
       @PathVariable String partnerId,
