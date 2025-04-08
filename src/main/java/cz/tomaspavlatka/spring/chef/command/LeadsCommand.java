@@ -31,8 +31,8 @@ public class LeadsCommand {
     terminal.writer().println("=============================");
 
     companies.forEach(comp -> {
-      var companyName = comp.company().displayName().or(() -> comp.company().name()).orElse("n/a");
-      terminal.writer().println("Company : " + companyName);
+      terminal.writer().println("Company : " + comp.company().displayName().orElse(""));
+      terminal.writer().println("Name    : " + comp.company().name().orElse(""));
       terminal.writer().println("ID      : " + comp.company().id());
       terminal.writer().println("Auth0ID : " + comp.company().auth0Id());
 
