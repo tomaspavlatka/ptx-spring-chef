@@ -1,10 +1,13 @@
 HELP.md
 .gradle
 build/
+data.csv
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 spring-chef.log
+src/main/resources/data/
+
 
 ### STS ###
 .apt_generated
