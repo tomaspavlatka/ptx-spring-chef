@@ -1,5 +1,7 @@
 package cz.tomaspavlatka.spring.chef.command;
 
+import java.io.IOException;
+
 import org.jline.terminal.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;
@@ -7,6 +9,7 @@ import org.springframework.shell.command.annotation.Option;
 
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.BillingsCompaniesQuery;
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.BillingsSummaryQuery;
+import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetLegacyPayableLeadsQuery;
 
 @Command(group = "Leads", command = "leads")
 public class LeadsCommand {
@@ -15,11 +18,14 @@ public class LeadsCommand {
 
   private final BillingsSummaryQuery billingsSummaryQuery;
   private final BillingsCompaniesQuery billingsCompaniesQuery;
+  private final GetLegacyPayableLeadsQuery getLegacyPayableLeadsQuery;
 
   public LeadsCommand(
       BillingsSummaryQuery billingsSummaryQuery,
+      GetLegacyPayableLeadsQuery getLegacyPayableLeadsQuery,
       BillingsCompaniesQuery billingsCompaniesQuery) {
     this.billingsSummaryQuery = billingsSummaryQuery;
+    this.getLegacyPayableLeadsQuery = getLegacyPayableLeadsQuery;
     this.billingsCompaniesQuery = billingsCompaniesQuery;
   }
 
@@ -55,6 +61,23 @@ public class LeadsCommand {
 
     summary.forEach((key, value) -> {
       terminal.writer().println("- " + key + ": " + value);
+    });
+
+    terminal.flush();
+  }
+
+  @Command(command = "legacy-payable-leads", description = "Get legacy payable leads for specific month")
+  void report(@Option(required = true) Integer month) throws IOException {
+    var leads = getLegacyPayableLeadsQuery.getPayableLeads(month);
+
+    terminal.writer().println("Legacy Payable Leads, M:" + month);
+    terminal.writer().println("===========================");
+
+    leads.forEach((key, value) -> {
+      terminal.writer().println("- Company ID:" + key);
+      value.forEach(lead -> {
+        terminal.writer().println("-- " + lead.getHistoryStatus() + ": " + lead.getPrice());
+      });
     });
 
     terminal.flush();

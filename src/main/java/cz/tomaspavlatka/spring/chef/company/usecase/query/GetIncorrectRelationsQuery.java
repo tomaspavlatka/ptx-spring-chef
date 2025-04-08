@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import cz.tomaspavlatka.spring.chef.company.model.IncorrectRelation;
 import cz.tomaspavlatka.spring.chef.company.model.Relation;
 import cz.tomaspavlatka.spring.chef.easybill.usecase.query.FindCustomerByNumberQuery;
+import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetLegacyPayableLeadsQuery;
 
 @Service
 public class GetIncorrectRelationsQuery {
