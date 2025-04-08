@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import cz.tomaspavlatka.spring.chef.lead.model.PayableLead;
+import cz.tomaspavlatka.spring.chef.lead.model.LegacyPayableLead;
 
 @Service
 public class GetLegacyPayableLeadsQuery {
@@ -19,19 +19,19 @@ public class GetLegacyPayableLeadsQuery {
     this.getPayableLeadsQuery = getPayableLeadsQuery;
   }
 
-  public Map<String, List<PayableLead>> getPayableLeads(Integer month) throws IOException {
-    var accepted = new HashMap<String, PayableLead>();
+  public Map<String, List<LegacyPayableLead>> getPayableLeads(Integer month) throws IOException {
+    var accepted = new HashMap<String, LegacyPayableLead>();
     getPayableLeadsQuery
-        .getPayableLeads("bought-leads-" + month + ".csv")
+        .getPayableLeads("legacy-bought-leads-" + month + ".csv", LegacyPayableLead.class)
         .forEach(lead -> {
           if (!accepted.containsKey(lead.getOfferId())) {
             accepted.put(lead.getOfferId(), lead);
           }
         });
 
-    var reclaimed = new HashMap<String, PayableLead>();
+    var reclaimed = new HashMap<String, LegacyPayableLead>();
     getPayableLeadsQuery
-        .getPayableLeads("reclaimed-leads-" + month + ".csv")
+        .getPayableLeads("legacy-reclaimed-leads-" + month + ".csv", LegacyPayableLead.class)
         .forEach(lead -> {
           if (!reclaimed.containsKey(lead.getOfferId())) {
             reclaimed.put(lead.getOfferId(), lead);
@@ -65,16 +65,16 @@ public class GetLegacyPayableLeadsQuery {
         .map(Map.Entry::getKey).toList();
     toRemoveReclaimedStatus.forEach(reclaimed::remove);
 
-    var perCompany = new HashMap<String, List<PayableLead>>();
+    var perCompany = new HashMap<String, List<LegacyPayableLead>>();
     accepted.values().forEach(lead -> {
-      var current = perCompany.getOrDefault(lead.getAuth0Id(), new ArrayList<PayableLead>());
+      var current = perCompany.getOrDefault(lead.getAuth0Id(), new ArrayList<LegacyPayableLead>());
       current.add(lead);
 
       perCompany.put(lead.getAuth0Id(), current);
     });
 
     reclaimed.values().forEach(lead -> {
-      var current = perCompany.getOrDefault(lead.getAuth0Id(), new ArrayList<PayableLead>());
+      var current = perCompany.getOrDefault(lead.getAuth0Id(), new ArrayList<LegacyPayableLead>());
       current.add(lead);
 
       perCompany.put(lead.getAuth0Id(), current);

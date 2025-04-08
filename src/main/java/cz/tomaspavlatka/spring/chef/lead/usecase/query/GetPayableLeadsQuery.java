@@ -10,17 +10,15 @@ import org.springframework.stereotype.Service;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
-import cz.tomaspavlatka.spring.chef.lead.model.PayableLead;
-
 @Service
 public class GetPayableLeadsQuery {
 
-  public List<PayableLead> getPayableLeads(String filename) throws IOException {
+  public <T> List<T> getPayableLeads(String filename, Class<T> type) throws IOException {
     ClassPathResource resource = new ClassPathResource("data/" + filename);
 
     Reader reader = new InputStreamReader(resource.getInputStream());
-    CsvToBean<PayableLead> csvToBean = new CsvToBeanBuilder<PayableLead>(reader)
-        .withType(PayableLead.class)
+    CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
+        .withType(type)
         .withIgnoreLeadingWhiteSpace(true)
         .build();
 
