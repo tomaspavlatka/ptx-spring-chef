@@ -9,10 +9,7 @@ import org.springframework.shell.command.annotation.Option;
 
 import cz.tomaspavlatka.spring.chef.company.usecase.query.GetCurrentRelationsQuery;
 import cz.tomaspavlatka.spring.chef.company.usecase.query.GetIncorrectRelationsQuery;
-import cz.tomaspavlatka.spring.chef.easybill.usecase.query.FindCustomerByNumberQuery;
 import cz.tomaspavlatka.spring.chef.lead.LeadEngineFacade;
-import cz.tomaspavlatka.spring.chef.lead.model.CompanyProfile;
-import cz.tomaspavlatka.spring.chef.lead.usecase.query.BillingsCompaniesQuery;
 
 @Command(group = "Companies", command = "companies")
 public class CompaniesCommand {

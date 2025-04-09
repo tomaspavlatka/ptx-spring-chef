@@ -11,7 +11,7 @@ import cz.tomaspavlatka.spring.chef.lead.usecase.query.BillingsCompaniesQuery;
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.BillingsSummaryQuery;
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetCurrentPayableLeadsQuery;
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetLegacyPayableLeadsQuery;
-import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetPayableLeadsQuery;
+import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetPayableLeadsMismatchQuery;
 
 @Command(group = "Leads", command = "leads")
 public class LeadsCommand {
@@ -22,14 +22,17 @@ public class LeadsCommand {
   private final BillingsCompaniesQuery billingsCompaniesQuery;
   private final GetLegacyPayableLeadsQuery getLegacyPayableLeadsQuery;
   private final GetCurrentPayableLeadsQuery getCurrentPayableLeadsQuery;
+  private final GetPayableLeadsMismatchQuery getPayableLeadsMismatchQuery;
 
   public LeadsCommand(
       BillingsSummaryQuery billingsSummaryQuery,
       GetLegacyPayableLeadsQuery getLegacyPayableLeadsQuery,
       GetCurrentPayableLeadsQuery getCurrentPayableLeadsQuery,
+      GetPayableLeadsMismatchQuery getPayableLeadsMismatchQuery,
       BillingsCompaniesQuery billingsCompaniesQuery) {
     this.billingsSummaryQuery = billingsSummaryQuery;
     this.getCurrentPayableLeadsQuery = getCurrentPayableLeadsQuery;
+    this.getPayableLeadsMismatchQuery = getPayableLeadsMismatchQuery;
     this.getLegacyPayableLeadsQuery = getLegacyPayableLeadsQuery;
     this.billingsCompaniesQuery = billingsCompaniesQuery;
   }
@@ -71,7 +74,7 @@ public class LeadsCommand {
     terminal.flush();
   }
 
-  @Command(command = "payable-leads", description = "Get payable leads for specific month")
+  @Command(command = "payable", description = "Get payable leads for specific month")
   void payableLeads(@Option(required = true) Integer month) throws IOException {
     var leads = getCurrentPayableLeadsQuery.getPayableLeads(month);
 
@@ -88,7 +91,7 @@ public class LeadsCommand {
     terminal.flush();
   }
 
-  @Command(command = "legacy-payable-leads", description = "Get legacy payable leads for specific month")
+  @Command(command = "legacy-payable", description = "Get legacy payable leads for specific month")
   void legacyPayableLeads(@Option(required = true) Integer month) throws IOException {
     var leads = getLegacyPayableLeadsQuery.getPayableLeads(month);
 
@@ -100,6 +103,29 @@ public class LeadsCommand {
       value.forEach(lead -> {
         terminal.writer().println("-- " + lead.getHistoryStatus() + ": " + lead.getPrice());
       });
+    });
+
+    terminal.flush();
+  }
+
+  @Command(command = "mismatch", description = "Shows mismatch between current and legacy payable leads")
+  void leadsMismatch(@Option(required = true) Integer month) throws IOException {
+    var mismatches = getPayableLeadsMismatchQuery.getPayableLeads(month);
+
+    terminal.writer().println("Payable Leads Mismatch, M:" + month);
+    terminal.writer().println("===========================");
+
+    mismatches.forEach((key, value) -> {
+      if (value.size() > 0) {
+        terminal.writer().println("- Company ID:" + key);
+        value.forEach(lead -> {
+          terminal.writer().println("-- " + lead.getReason());
+          terminal.writer().println("--- ID: " + lead.getOfferId());
+          terminal.writer().println("--- Status: " + lead.getOfferStatus());
+          terminal.writer().println("--- Price: " + lead.getPrice());
+          terminal.writer().println("--- CreatedAt: " + lead.getCreatedAt());
+        });
+      }
     });
 
     terminal.flush();
