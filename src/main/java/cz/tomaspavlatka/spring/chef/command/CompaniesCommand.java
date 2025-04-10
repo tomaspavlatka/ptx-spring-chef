@@ -29,7 +29,10 @@ public class CompaniesCommand {
     this.getCurrentRelationsQuery = getCurrentRelationsQuery;
   }
 
-  @Command(command = "incorrect", description = "Find incorrectly linked companies")
+  @Command(
+    command = "customer-id-issues", 
+    description = "List all discrepancies between known customer id relations and reality"
+  )
   void companies(@Option() String filename) throws IOException {
     var current = getCurrentRelationsQuery.getRelations(filename);
 
