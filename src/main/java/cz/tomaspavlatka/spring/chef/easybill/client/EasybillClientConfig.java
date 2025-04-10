@@ -1,4 +1,4 @@
-package cz.tomaspavlatka.spring.chef.config;
+package cz.tomaspavlatka.spring.chef.easybill.client;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,49 +10,15 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import cz.tomaspavlatka.spring.chef.easybill.EasybillClient;
 import cz.tomaspavlatka.spring.chef.easybill.EasybillProperties;
-import cz.tomaspavlatka.spring.chef.lead.LeadEngineAuthTokenClient;
-import cz.tomaspavlatka.spring.chef.lead.LeadEngineJwtTokenClient;
-import cz.tomaspavlatka.spring.chef.lead.LeadEngineProperties;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-public class ClientConfig {
-  private final LeadEngineProperties leadEngineProperties;
+public class EasybillClientConfig {
   private final EasybillProperties easybillProperties;
 
-  public ClientConfig(
-      LeadEngineProperties leadEngineProperties,
+  public EasybillClientConfig(
       EasybillProperties easybillProperties) {
-    this.leadEngineProperties = leadEngineProperties;
     this.easybillProperties = easybillProperties;
-  }
-
-  @Bean
-  LeadEngineJwtTokenClient leadEngineJwtTokenClient() {
-    WebClient webClient = WebClient.builder()
-        .baseUrl(leadEngineProperties.getBaseUrl())
-        .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + leadEngineProperties.getJwtToken())
-        .build();
-
-    HttpServiceProxyFactory factory = HttpServiceProxyFactory
-        .builderFor(WebClientAdapter.create(webClient))
-        .build();
-
-    return factory.createClient(LeadEngineJwtTokenClient.class);
-  }
-
-  @Bean
-  LeadEngineAuthTokenClient leadEngineAuthTokenClient() {
-    WebClient webClient = WebClient.builder()
-        .baseUrl(leadEngineProperties.getBaseUrl())
-        .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + leadEngineProperties.getAuthToken())
-        .build();
-
-    HttpServiceProxyFactory factory = HttpServiceProxyFactory
-        .builderFor(WebClientAdapter.create(webClient))
-        .build();
-
-    return factory.createClient(LeadEngineAuthTokenClient.class);
   }
 
   @Bean
