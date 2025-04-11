@@ -1,5 +1,6 @@
 package cz.tomaspavlatka.spring.chef.command;
 
+
 import org.jline.terminal.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;
@@ -19,7 +20,9 @@ public class LeadBillingsCommand {
     this.getBillingsSummaryQuery = getBillingsSummaryQuery;
   }
 
-  @Command(command = "billing-summary", description = "Shows lead billing summary for specific month")
+  @Command(
+    command = "billing-summary",
+    description = "Shows lead billing summary for specific month")
   void summary(@Option(required = true) Integer year, @Option(required = true) Integer month) {
     var summary = getBillingsSummaryQuery.getSummary(year, month);
 
@@ -36,6 +39,20 @@ public class LeadBillingsCommand {
     terminal.writer().println("- Prices");
     summary.prices().forEach((key, value) -> {
       terminal.writer().println("-- " + key + ": " + value);
+    });
+
+    terminal.writer().println("- Detailed");
+    summary.statusPriceQuanties().forEach((status, priceQuantity) -> {
+      terminal.writer().println("-- " + status);
+      priceQuantity
+          .entrySet()
+          .stream()
+          .sorted((e1, e2) -> e2.getKey().compareTo(e1.getKey()))
+          .toList()
+          .forEach(entry -> {
+            terminal.writer().println("--- p:" + entry.getKey() + ", q:" + entry.getValue());
+          });
+
     });
 
     terminal.flush();

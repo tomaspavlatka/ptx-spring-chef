@@ -1,6 +1,7 @@
 package cz.tomaspavlatka.spring.chef.lead.usecase.query;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -20,19 +21,25 @@ public class GetBillingsSummaryQuery {
     var records = leadEngineFacade.forPeriod(year, month);
     var quantites = new HashMap<String, Integer>();
     var prices = new HashMap<String, Float>();
+    var statusPrices = new HashMap<String, Map<Float, Integer>>();
 
     records.orgs().stream().forEach(org -> {
       org.items().stream().forEach(itm -> {
         var status = itm.status().toLowerCase();
 
-        var qty = quantites.containsKey(status) ? quantites.get(status) : 0;
+        var qty = quantites.getOrDefault(status, 0);
         quantites.put(status, ++qty);
 
-        var price = prices.containsKey(status) ? prices.get(status) : 0;
+        var price = prices.getOrDefault(status, 0F);
         prices.put(status, (price + itm.price()));
+
+        var statusPrice = statusPrices.getOrDefault(status, new HashMap<Float, Integer>());
+        var priceQty = statusPrice.getOrDefault(itm.price(), 0);
+        statusPrice.put(itm.price(), ++priceQty);
+        statusPrices.put(status, statusPrice);
       });
     });
 
-    return new BillingsSummary(year, month, quantites, prices);
+    return new BillingsSummary(year, month, quantites, prices, statusPrices);
   }
 }

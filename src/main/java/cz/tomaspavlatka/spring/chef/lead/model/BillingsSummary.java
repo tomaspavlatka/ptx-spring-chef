@@ -6,5 +6,6 @@ public record BillingsSummary(
     Integer year,
     Integer month,
     Map<String, Integer> quantities,
-    Map<String, Float> prices) {
+    Map<String, Float> prices,
+    Map<String, Map<Float, Integer>> statusPriceQuanties) {
 }
