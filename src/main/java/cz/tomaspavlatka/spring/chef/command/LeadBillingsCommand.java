@@ -29,29 +29,43 @@ public class LeadBillingsCommand {
     terminal.writer().println("-----------------");
     terminal.writer().println("SUMMARY, Y:" + year + ", M:" + month);
 
-    terminal.writer().println("- Quantities");
-    summary.quantities().forEach((key, value) -> {
-      terminal.writer().println("-- " + key + ": " + value);
-    });
+    // Qty per status
+    var showQtyLegend = true;
+    for (Map.Entry<String, Integer> entry : summary.quantities().entrySet()) {
+      if (showQtyLegend) {
+        terminal.writer().println("-- Qty per status   : " + entry.getKey() + ": " + entry.getValue());
+        showQtyLegend = false;
+      } else {
+        terminal.writer().println("--                  : " + entry.getKey() + ": " + entry.getValue());
+      }
+    }
+  
+    // Price
+    var showPriceLegend = true;
+    for (Map.Entry<String, Float> entry : summary.prices().entrySet()) {
+      if (showPriceLegend) {
+        terminal.writer().println("-- Prices           : " + entry.getKey() + ": " + entry.getValue());
+        showPriceLegend = false;
+      } else {
+        terminal.writer().println("--                  : " + entry.getKey() + ": " + entry.getValue());
+      }
+    }
 
-    terminal.writer().println("- Prices");
-    summary.prices().forEach((key, value) -> {
-      terminal.writer().println("-- " + key + ": " + value);
-    });
+    // Qty pre price ans status
+    var showPriceStatusLegend = true;
+    for (Map.Entry<String, Map<Float, Integer>> entry : summary.statusPriceQuanties().entrySet()) {
+      if (showPriceStatusLegend) {
+        terminal.writer().println("-- Qty status/price : " + entry.getKey());
+        showPriceStatusLegend = false;
+      } else {
+        terminal.writer().println("--                  : " + entry.getKey());
+      }
 
-    terminal.writer().println("- Detailed");
-    summary.statusPriceQuanties().forEach((status, priceQuantity) -> {
-      terminal.writer().println("-- " + status);
-      priceQuantity
-          .entrySet()
-          .stream()
-          .sorted((e1, e2) -> e2.getKey().compareTo(e1.getKey()))
-          .toList()
-          .forEach(entry -> {
-            terminal.writer().println("--- p:" + entry.getKey() + ", q:" + entry.getValue());
-          });
+      entry.getValue().forEach((price, qty) -> {
+        terminal.writer().println("--                  : - p: " + price + ", q: " + qty);
+      });
+    }
 
-    });
 
     terminal.flush();
   }
@@ -103,7 +117,7 @@ public class LeadBillingsCommand {
         }
 
         entry.getValue().forEach((price, qty) -> {
-          terminal.writer().println("--                  : p: " + price + ", q: " + qty);
+          terminal.writer().println("--                  : - p: " + price + ", q: " + qty);
         });
       }
 
