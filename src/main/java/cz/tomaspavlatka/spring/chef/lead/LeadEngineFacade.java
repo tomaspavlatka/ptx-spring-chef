@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import cz.tomaspavlatka.spring.chef.lead.client.LeadEngineAuthTokenClient;
 import cz.tomaspavlatka.spring.chef.lead.client.LeadEngineJwtTokenClient;
 import cz.tomaspavlatka.spring.chef.lead.model.Billing;
+import cz.tomaspavlatka.spring.chef.lead.model.Company;
 import cz.tomaspavlatka.spring.chef.lead.model.Organization;
 
 @Component
