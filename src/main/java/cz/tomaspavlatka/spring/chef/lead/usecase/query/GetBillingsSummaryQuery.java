@@ -17,7 +17,7 @@ public class GetBillingsSummaryQuery {
     this.leadEngineFacade = leadEngineFacade;
   }
 
-  public BillingsSummary getSummary(Integer year, Integer month) {
+  public BillingsSummary execute(Integer year, Integer month) {
     var records = leadEngineFacade.forPeriod(year, month);
     var quantites = new HashMap<String, Integer>();
     var prices = new HashMap<String, Float>();

@@ -25,7 +25,7 @@ public class LeadBillingsCommand {
 
   @Command(command = "billing-summary", description = "Shows lead billing summary for specific month")
   void summary(@Option(required = true) Integer year, @Option(required = true) Integer month) {
-    var summary = getBillingsSummaryQuery.getSummary(year, month);
+    var summary = getBillingsSummaryQuery.execute(year, month);
 
     terminal.writer().println("-----------------");
     terminal.writer().println("| Lead Billings |");
@@ -75,7 +75,7 @@ public class LeadBillingsCommand {
 
   @Command(command = "billing-per-company", description = "Shows lead billing summary based on comapnies for specific month")
   void perCompany(@Option(required = true) Integer year, @Option(required = true) Integer month) {
-    var summary = getBillingspBillingsPerCompanyQuery.getPerCompany(year, month);
+    var summary = getBillingspBillingsPerCompanyQuery.execute(year, month);
 
     terminal.writer().println("-----------------");
     terminal.writer().println("| Lead Billings |");

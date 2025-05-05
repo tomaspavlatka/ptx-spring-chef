@@ -19,7 +19,7 @@ public class GetBillingsPerCompanyQuery {
     this.leadEngineFacade = leadEngineFacade;
   }
 
-  public BillingsPerCompany getPerCompany(Integer year, Integer month) {
+  public BillingsPerCompany execute(Integer year, Integer month) {
     var organizations = this.leadEngineFacade.getOrganizations();
     var records = leadEngineFacade.forPeriod(year, month);
     var companies = records.orgs().stream().map(org -> {

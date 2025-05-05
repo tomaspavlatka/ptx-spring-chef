@@ -14,7 +14,7 @@ import cz.tomaspavlatka.spring.chef.company.model.Relation;
 
 @Service
 public class GetCurrentRelationsQuery {
-  public List<Relation> getRelations(String filename) throws IOException {
+  public List<Relation> execute(String filename) throws IOException {
     ClassPathResource resource = new ClassPathResource("data/" + filename);
 
     Reader reader = new InputStreamReader(resource.getInputStream());

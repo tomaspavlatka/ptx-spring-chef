@@ -15,7 +15,7 @@ public class FindCustomerByNumberQuery {
     this.easybillClient = easybillClient;
   }
 
-  public Optional<Customer> findByNumber(String number) {
+  public Optional<Customer> execute(String number) {
     return this.easybillClient.getCustomersByNumber(number)
         .items()
         .stream()

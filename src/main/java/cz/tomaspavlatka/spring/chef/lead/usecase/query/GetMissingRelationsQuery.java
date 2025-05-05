@@ -26,8 +26,8 @@ public class GetMissingRelationsQuery {
   }
 
   public MissingRelations execute(Integer year, Integer month, String relationsFile) throws IOException {
-    List<Relation> currentRelations = getCurrentRelationsQuery.getRelations(relationsFile);
-    BillingsPerCompany summary = getBillingsPerCompanyQuery.getPerCompany(year, month);
+    List<Relation> currentRelations = getCurrentRelationsQuery.execute(relationsFile);
+    BillingsPerCompany summary = getBillingsPerCompanyQuery.execute(year, month);
 
     List<Company> missingCompanies = new ArrayList<Company>();
     summary.companies().forEach(comp -> {
