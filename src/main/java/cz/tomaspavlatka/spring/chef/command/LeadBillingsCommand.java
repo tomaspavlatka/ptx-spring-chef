@@ -1,5 +1,6 @@
 package cz.tomaspavlatka.spring.chef.command;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.jline.terminal.Terminal;
@@ -9,6 +10,7 @@ import org.springframework.shell.command.annotation.Option;
 
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetBillingsPerCompanyQuery;
 import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetBillingsSummaryQuery;
+import cz.tomaspavlatka.spring.chef.lead.usecase.query.GetMissingRelationsQuery;
 import lombok.RequiredArgsConstructor;
 
 @Command(group = "Leads", command = "leads")
@@ -19,6 +21,7 @@ public class LeadBillingsCommand {
 
   private final GetBillingsSummaryQuery getBillingsSummaryQuery;
   private final GetBillingsPerCompanyQuery getBillingspBillingsPerCompanyQuery;
+  private final GetMissingRelationsQuery getMissingRelationsQuery; 
 
   @Command(command = "billing-summary", description = "Shows lead billing summary for specific month")
   void summary(@Option(required = true) Integer year, @Option(required = true) Integer month) {
@@ -122,6 +125,28 @@ public class LeadBillingsCommand {
       }
 
       terminal.writer().println("---------");
+    });
+
+    terminal.flush();
+  }
+
+  @Command(command = "missing-relations", description = "Shows missing relations from the specified period")
+  void missingRelations(
+    @Option(required = true) Integer year,
+    @Option(required = true) Integer month,
+    @Option(required = true) String relationsFile
+  ) throws IOException {
+    var missing = getMissingRelationsQuery.execute(year, month, relationsFile);
+
+    terminal.writer().println("---------------------");
+    terminal.writer().println("| Missing Relations |");
+    terminal.writer().println("---------------------");
+    terminal.writer().println("SUMMARY, Y:" + year + ", M:" + month + ", C:" + missing.missingCompanies().size());
+
+    missing.missingCompanies().forEach(comp -> {
+      terminal.writer().println("- Name              : " + comp.name());
+      terminal.writer().println("-- ID               : " + comp.id());
+      terminal.writer().println("-- Auth0ID          : " + comp.auth0Id());
     });
 
     terminal.flush();
